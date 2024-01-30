@@ -3,8 +3,12 @@ import { useUser } from "@auth0/nextjs-auth0/client";
 import Script from "next/script";
 import { type Subscription, getSubscriptionAction } from "./actions";
 import { useEffect, useState } from "react";
+import ApiKeyManager from "@zuplo/react-api-key-manager";
+import { useZuploContext } from "./zuplo-provider";
 
 export default function Home() {
+  const provider = useZuploContext();
+
   const { user, isLoading } = useUser();
   const [subscription, setSubscription] = useState<Subscription>();
 
@@ -21,6 +25,13 @@ export default function Home() {
       {user ? (
         <>
           Welcome {user.email}!
+          {subscription && provider && (
+            <ApiKeyManager
+              provider={provider}
+              enableCreateConsumer
+              enableDeleteConsumer
+            />
+          )}
           {!subscription && (
             <div>
               <Script async src="https://js.stripe.com/v3/pricing-table.js" />
